@@ -1,0 +1,24 @@
+"""
+
+Given an employee attendance table, kindly provide 
+a query that shows if an employee was absent 3 days consecutively
+in a week.
+
+The table structure is given below:
+
+employee_attendance (ID VARCHAR(10), EMPLOYEE_ID INT, 
+TIME_IN DATETIME, TIME_OUT DATETIME, FIRST_NAME VARCHAR(100), 
+LAST_NAME VARCHAR(100))
+
+"""
+
+SELECT EMPLOYEE_ID, CONCAT(FIRST_NAME,'/',LAST_NAME) AS EMPLOYEE_NAME, DATE_DIFFERENCE FROM
+(SELECT *,(TIME_IN::date-PREVIOUS_TIME_IN::date)/4 AS DATE_DIFFERENCE FROM
+(SELECT *, LAG(TIME_IN) OVER (PARTITION BY EMPLOYEE_ID, WEEK_OF_THE_YEAR) 
+(ORDER BY EMPLOYEE_ID, WEEK_OF_THE_YEAR, TIME_IN) AS PREVIOUS_TIME_IN  FROM
+(SELECT *, TO_CHAR(TIME_IN, 'YYYY-WW') AS WEEK_OF_THE_YEAR,
+TO_CHAR(TIME_IN,'DY') AS DAY_OF_THE_WEEK
+FROM employee_attendance) AS derivedTable)
+AS derivedTable2
+WHERE DAY_OF_THE_WEEK NOT IN ('SAT', 'SUN'))AS derivedTable3
+WHERE DATE_DIFFERENCE>=1 

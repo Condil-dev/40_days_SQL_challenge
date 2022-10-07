@@ -1,0 +1,24 @@
+services:
+  pgdatabase:
+    image: postgres:13
+    ports: 
+    - "5432:5432"
+    environment:
+    - POSTGRES_USER=challenge 
+    - POSTGRES_PASSWORD=challenge 
+    - POSTGRES_DB=40_days
+    volumes:
+    - "~/40_days_data:/var/lib/postgresql/data:rw"
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+    - "8080:80"
+    environment:
+    - PGADMIN_DEFAULT_EMAIL=admin@admin.com 
+    - PGADMIN_DEFAULT_PASSWORD=challenge
+
+# networks:
+#   airflow:
+#     external:
+#       name: airflow_default
+
